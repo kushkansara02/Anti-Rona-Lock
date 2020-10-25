@@ -1,6 +1,8 @@
-from pyimagesearch.facedetector import FaceDetector
+from facedetector import FaceDetector
 import imutils
 import cv2
+
+# the following class will be able to detect whether faces are social distancing given an input file
 
 class DistanceDetector:
 
