@@ -1,4 +1,4 @@
-from facedetector import FaceDetector
+from .facedetector import FaceDetector
 import imutils
 import cv2
 
