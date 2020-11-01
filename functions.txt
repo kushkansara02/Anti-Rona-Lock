@@ -1,5 +1,5 @@
 
-def example_function(args)
+def example_function(params)
     -Location
     -Return
     -Usability
