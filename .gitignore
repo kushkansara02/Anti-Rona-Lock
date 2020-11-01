@@ -141,4 +141,11 @@ dmypy.json
 # profiling data
 .prof
 
+# PyCharm
+.idea
+
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+.vscode/
+
+Social_Distancing_Detection/.DS_Store
