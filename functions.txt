@@ -2,6 +2,7 @@
 def example_function(args)
     -Location
     -Return
+    -Usability
     -More info
 
 ____________________________________________
@@ -10,7 +11,8 @@ David Xu:
 
 def get_distance(x1,y1,x2,y2,x3,y3,x4,y4,face1Dist,face2Dist,imagePixelWidth,camAngle)
     -Located in Social_Distancing_Detection in the distance_calculation.py file
-    -returns the distance between two faces
+    -Returns the distance between two faces
+    -Works as expected, but not necessarily mathematically correct
     -Look at file for more info
 ____________________________________________
 
