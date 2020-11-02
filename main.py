@@ -1,5 +1,6 @@
 #whole bunch of other imports here
-import time
+from time import sleep
+from PIL import Image
 
 def arduino_start():
     print("Arduino started.")
@@ -45,13 +46,17 @@ def main():
             locked = False
         else:
             print("Violation detected. Waiting " + str(wait_time) + " seconds before getting new image.")
-            time.sleep(wait_time)
+            sleep(wait_time)
             
-    time.sleep(10)
+    sleep(10)
     arduino_lock_door()
     arduino_stop()
     print("Program Finished.")
 
 
 if __name__ == "__main__":
+    image1 = Image.open("cat.png")
+    image1.show()
+    # image2 = Image.open("cat2.jpg")
+    # image2.show()
     main()
