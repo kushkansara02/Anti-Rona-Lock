@@ -1,6 +1,7 @@
 #whole bunch of other imports here
 from time import sleep
 from PIL import Image
+#I installed PIL (pillow) using this: pip3 install pillow
 
 def arduino_start():
     print("Arduino started.")
