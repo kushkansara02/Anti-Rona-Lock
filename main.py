@@ -2,6 +2,8 @@
 from time import sleep
 from PIL import Image
 #I installed PIL (pillow) using this: pip3 install pillow
+#Not sure if pillow is needed anymore, tkinter might be enough
+import tkinter
 
 def arduino_start():
     print("Arduino started.")
@@ -56,8 +58,26 @@ def main():
 
 
 if __name__ == "__main__":
-    image1 = Image.open("cat.png")
-    image1.show()
+    image_list = []
+
+    # image1 = Image.open("cat.png")
+    # image_list[0].show()
+
+    root = tkinter.Tk()
+    canvas = tkinter.Canvas(root, width=1000, height=1000)      
+    
+    img = tkinter.PhotoImage(file="cat.png")  
+    # img2 = tkinter.PhotoImage(Image.open("cat2.jpg"))
+    # tkinter doesn't seem to support jpg images, there might be a fix for this but idk
+    image_list.append(img)
+    # image_list.append(img2)    
+    canvas.create_image(0,0, anchor=tkinter.constants.NW, image=image_list[0])   
+
+    canvas.pack() 
+    root.update()
+ 
+    # tk.mainloop()  
+
     # image2 = Image.open("cat2.jpg")
     # image2.show()
     main()
