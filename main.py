@@ -1,6 +1,6 @@
 #whole bunch of other imports here
 from time import sleep
-from PIL import Image
+from PIL import Image, ImageTk
 #I installed PIL (pillow) using this: pip3 install pillow
 #Not sure if pillow is needed anymore, tkinter might be enough
 import tkinter
@@ -58,6 +58,9 @@ def main():
 
 
 if __name__ == "__main__":
+
+    main()
+
     image_list = []
 
     # image1 = Image.open("cat.png")
@@ -66,18 +69,22 @@ if __name__ == "__main__":
     root = tkinter.Tk()
     canvas = tkinter.Canvas(root, width=1000, height=1000)      
     
-    img = tkinter.PhotoImage(file="cat.png")  
-    # img2 = tkinter.PhotoImage(Image.open("cat2.jpg"))
-    # tkinter doesn't seem to support jpg images, there might be a fix for this but idk
+    img = tkinter.PhotoImage(file="cat.png") #png images done like this
+    img2 = ImageTk.PhotoImage(Image.open("cat2.jpg")) #jpg is not supported by tkinter, so gotta do it this way
     image_list.append(img)
-    # image_list.append(img2)    
-    canvas.create_image(0,0, anchor=tkinter.constants.NW, image=image_list[0])   
+    image_list.append(img2)    
 
+    canvas.create_image(0,0, anchor=tkinter.constants.NW, image=image_list[0])   
     canvas.pack() 
     root.update()
- 
+
+    sleep(2)
+
+    canvas.create_image(0,0, anchor=tkinter.constants.NW, image=image_list[1]) 
+    canvas.pack()
+    root.update()
+
     # tk.mainloop()  
 
     # image2 = Image.open("cat2.jpg")
     # image2.show()
-    main()
