@@ -4,6 +4,8 @@ from math import pi
 from image_analysis import get_cam_to_object_distance
 from image_analysis import get_angle
 
+CONST_CAM_ANGLE = pi/2
+
 #Point class is not really necessary
 class Point():
     x = 0
@@ -53,7 +55,7 @@ def get_distance(x1,y1,x2,y2,x3,y3,x4,y4,face1Dist,face2Dist,imagePixelWidth,cam
 
 #face1Size and face2Size: the real size (width) of face 1 and face 2 (for our purposes, we pass in the same value for both)
 
-def get_distance(x1, y1, x2, y2, x3, y3, x4, y4, face1Size, face2Size, imagePixelWidth, camAngle): 
+def get_distance(x1, y1, x2, y2, x3, y3, x4, y4, face1Size, face2Size, imagePixelWidth, camAngle=CONST_CAM_ANGLE): 
     face1Center = Point((x1+x2)/2, (y1+y2)/2)
     # print("f1:")
     # face1Center.print_point()
@@ -78,5 +80,5 @@ def get_distance(x1, y1, x2, y2, x3, y3, x4, y4, face1Size, face2Size, imagePixe
 if __name__ == "__main__":
     #expecting output 0.7653668647301795 for input (0,0,50,0,50,0,100,0,1,1,100,pi/2)
     #test = get_distance(0,0,50,0,50,0,100,0,1,1,100,pi/2)
-    test = get_distance(0,0,50,0,50,0,100,0,1,1,100,pi/2)
+    test = get_distance(0,0,50,0,50,0,100,0,1,1,100)
     print(test)
