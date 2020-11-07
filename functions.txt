@@ -12,14 +12,14 @@ David Xu:
 
 def get_distance(x1,y1,x2,y2,x3,y3,x4,y4,face1Dist,face2Dist,imagePixelWidth,camAngle)
     -Located in Social_Distancing_Detection/image_handling/distance_calculations/distance_calculation.py
-    -Returns the distance between two faces
+    -Returns the (real-life, not pixel) distance between two faces
     -Works as expected, but not necessarily mathematically correct
     -"from image_handling import get_distance"
     -Look at file for more info
 
 def get_distance(x1, y1, x2, y2, x3, y3, x4, y4, face1Size, face2Size, imagePixelWidth, camAngle)
     -Located in Social_Distancing_Detection/image_handling/distance_calculations/distance_calculation.py
-    -Returns the distance between two faces
+    -Returns the (real-life, not pixel) distance between two faces
     -Not tested
     -"from image_handling import get_distance"
     -Look at file for more info
