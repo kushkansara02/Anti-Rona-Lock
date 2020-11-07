@@ -19,8 +19,8 @@ while True:
     # if not grabbed:
     #     break
 
-    detector = DistanceDetector(image = frame)
-    detector.getCloseFaces()
+    detector = DistanceDetector(image=frame)
+    allBreaches = detector.getCloseFaces()
     cv2.imshow("Webcam!", detector.image)
 
     if cv2.waitKey(1) & 0xFF == ord("q"):

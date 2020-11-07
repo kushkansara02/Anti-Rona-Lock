@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 #I installed PIL (pillow) using this: pip3 install pillow
 #Not sure if pillow is needed anymore, tkinter might be enough
 import tkinter
+from .Social_Distancing_Detection import DistanceDetector
 
 def arduino_start():
     print("Arduino started.")
@@ -30,10 +31,12 @@ def mask_detection(image):
     return True
 
 def distance_detection(image):
-    print("Social distancing is being maintained.")
-    return True
-
-
+    detector = DistanceDetector(image)
+    detector.getCloseFaces()
+    allBreaches = detector.all_breaches
+    if len(allBreaches > 0):
+        return False #do not open door, they are not following rules
+    return True #open door
 
 #main is currently full of dummy functions that have yet to be actually implemented 
 def main():

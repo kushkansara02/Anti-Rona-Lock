@@ -1,8 +1,8 @@
 from math import cos
 from math import sqrt
 from math import pi
-from image_analysis import get_cam_to_object_distance
-from image_analysis import get_angle
+from .image_analysis import get_cam_to_object_distance
+from .image_analysis import get_angle
 
 CONST_CAM_ANGLE = pi/2
 
