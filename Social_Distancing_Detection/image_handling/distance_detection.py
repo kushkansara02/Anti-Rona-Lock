@@ -12,18 +12,20 @@ class DistanceDetector:
     gray = None
     distance_tolerance = None
     adj_width = None
+    height = None
     all_faces = None
     face_distances = None
     all_breaches = None
 
-    def __init__(self, image_file = None, image = [], distance_tolerance = 2, adj_width = 500):
+    def __init__(self, image_file = None, image = [], distance_tolerance = 1, adj_width = 1000, height = 500):
         self.image_file = image_file
         self.distance_tolerance = distance_tolerance
         self.adj_width = adj_width
+        self.height = height
         if len(image) > 0:
-            self.image = imutils.resize(image, width=self.adj_width)
+            self.image = imutils.resize(image, width=self.adj_width, height=self.height)
         else:
-            self.image = imutils.resize(cv2.imread(image_file), width=self.adj_width)
+            self.image = imutils.resize(cv2.imread(image_file), width=self.adj_width, height=self.height)
 
         self.gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
 
@@ -77,7 +79,7 @@ class DistanceDetector:
         for face in self.all_faces:
             for compFace in self.all_faces:
                 if face != compFace and not ([compFace, face] in faces_done or [face, compFace] in faces_done):
-                    distance = get_distance(face["startCord"][0], face["startCord"][1], face["endCord"][0], face["endCord"][1], compFace["startCord"][0], compFace["startCord"][1], compFace["endCord"][0], compFace["endCord"][1], 1, 1, self.adj_width)
+                    distance = get_distance(face["startCord"][0], face["startCord"][1], face["endCord"][0], face["endCord"][1], compFace["startCord"][0], compFace["startCord"][1], compFace["endCord"][0], compFace["endCord"][1], 0.1, 0.1, self.adj_width)
                     self.face_distances.append({"faces": [face, compFace], "dist": distance})
                     faces_done.append([face, compFace])
 
@@ -86,10 +88,11 @@ class DistanceDetector:
         # going through data structure to find exact people in breach and the location of their faces (to draw red rectangle around them)
         self.all_breaches = []
         for face_combo in self.face_distances:
+            print(face_combo["dist"])
             if face_combo["dist"] < self.distance_tolerance:
                 self.all_breaches.append(face_combo)
                 cv2.putText(self.image, "Faces in this image not following social distancing",
-                            (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+                            (50, self.height - 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
                 print("SOCIAL DISTANCING IN BREACH")
                 print("Face 1: {faceStart} to {faceEnd}".format(faceStart = face_combo["faces"][0]["startCord"], faceEnd = face_combo["faces"][0]["endCord"]))
                 print("Face 2: {faceStart} to {faceEnd}".format(faceStart = face_combo["faces"][1]["startCord"], faceEnd = face_combo["faces"][1]["endCord"]))

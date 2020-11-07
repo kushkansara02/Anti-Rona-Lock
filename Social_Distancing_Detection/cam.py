@@ -21,6 +21,7 @@ while True:
 
     detector = DistanceDetector(image=frame)
     allBreaches = detector.getCloseFaces()
+    print(allBreaches)
     cv2.imshow("Webcam!", detector.image)
 
     if cv2.waitKey(1) & 0xFF == ord("q"):

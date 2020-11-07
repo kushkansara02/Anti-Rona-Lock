@@ -14,6 +14,11 @@ def arduino_get_image():
     print("Retrieved image successfully.")
     return 0
 
+def arduino_range_sensor():
+    #will tell us if there is an object in front of the door
+    print("There is someone at the door")
+    return True
+
 def arduino_unlock_door():
     print("Door unlocked successfully.")
     return
@@ -44,15 +49,16 @@ def main():
     locked = True
     wait_time = 1
     while locked:
-        image = arduino_get_image()
-        masks = mask_detection(image)
-        distancing = distance_detection(image)
-        if (masks and distancing): 
-            arduino_unlock_door()
-            locked = False
-        else:
-            print("Violation detected. Waiting " + str(wait_time) + " seconds before getting new image.")
-            sleep(wait_time)
+        if arduino_range_sensor():
+            image = arduino_get_image()
+            masks = mask_detection(image)
+            distancing = distance_detection(image)
+            if (masks and distancing):
+                arduino_unlock_door()
+                locked = False
+            else:
+                print("Violation detected. Waiting " + str(wait_time) + " seconds before getting new image.")
+                sleep(wait_time)
             
     sleep(10)
     arduino_lock_door()

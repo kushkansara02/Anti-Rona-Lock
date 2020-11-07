@@ -44,12 +44,15 @@ if len(allBreaches > 0):
 
 Class DistanceDetector:
     -initializing
-        -detector = DistanceDetector(either image_file or image (array of pixels), adj_width (what is your intended image width?))
+        -detector = DistanceDetector(either image_file or image (array of pixels), adj_width (what is your intended image width?), height (what is your intended image height?))
+
     -important methods
-        -detector.getCloseFaces(): will compute all close faces, and set values for all_faces, face_distanecs, all_breaches
+        -detector.getCloseFaces(): will compute all close faces, and set values for all_faces, distances, all_breaches
+
     -important properties:
         -detector.distance_tolerance: what is the lowest distance that people can be with respect to each other?
         -detector.adj_width: the width of the desired image to perform calculations on
+        -detector.height: the height of the desired image to perform calculations on
 
         IMPORTANT: the structure for a face is: {"startCord": [x, y], "endCord": [x, y]}
         #################################################################################
