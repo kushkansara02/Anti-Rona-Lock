@@ -30,7 +30,10 @@ INIT_LR = 1e-4   # slow learning rate results in less to get better accuracy
 EPOCHS = 20
 BS = 32
 
-DIRECTORY = r"/desktop/Face-Mask-Detection-master/dataset"  #reffering to the dataset in the same folder, used to train our model
+dir_path = os.path.dirname(os.path.realpath(__file__))
+dataset_path = dir_path + "/dataset"
+
+DIRECTORY = dataset_path  #reffering to the dataset in the same folder, used to train our model
 CATEGORIES = ["people_wearing_masks", "people_not_wearing masks"]  # name of the 2 files 
 
 # grab the list of images in our dataset directory, then initialize

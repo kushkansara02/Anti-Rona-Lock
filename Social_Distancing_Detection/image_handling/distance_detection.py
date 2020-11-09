@@ -16,6 +16,7 @@ class DistanceDetector:
     all_faces = None
     face_distances = None
     all_breaches = None
+    num_faces = 0
 
     def __init__(self, image_file = None, image = [], distance_tolerance = 1, adj_width = 1000, height = 500):
         self.image_file = image_file
@@ -39,7 +40,8 @@ class DistanceDetector:
             start_cord = (x, y)
             end_cord = (x + w, y + h)
             cv2.rectangle(self.image, start_cord, end_cord, (0, 255, 0), 2)
-            cv2.putText(self.image, "{} faces in this image".format(len(face_rects)),
+            self.num_faces = len(face_rects)
+            cv2.putText(self.image, "{} faces in this image".format(self.num_faces),
                         (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
             self.all_faces.append({"startCord": start_cord, "endCord": end_cord})
 
@@ -79,7 +81,7 @@ class DistanceDetector:
         for face in self.all_faces:
             for compFace in self.all_faces:
                 if face != compFace and not ([compFace, face] in faces_done or [face, compFace] in faces_done):
-                    distance = get_distance(face["startCord"][0], face["startCord"][1], face["endCord"][0], face["endCord"][1], compFace["startCord"][0], compFace["startCord"][1], compFace["endCord"][0], compFace["endCord"][1], 0.1, 0.1, self.adj_width)
+                    distance = get_distance(face["startCord"][0], face["startCord"][1], face["endCord"][0], face["endCord"][1], compFace["startCord"][0], compFace["startCord"][1], compFace["endCord"][0], compFace["endCord"][1], 0.07, 0.07, self.adj_width)
                     self.face_distances.append({"faces": [face, compFace], "dist": distance})
                     faces_done.append([face, compFace])
 
