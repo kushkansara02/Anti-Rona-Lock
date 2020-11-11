@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
     #this code replaces main()
     arduino_start()
-    wait_time = 3
+    CONST_WAIT_TIME = 3
     def while_loop():
         if arduino_range_sensor():
             image = arduino_get_image()
@@ -154,9 +154,9 @@ if __name__ == "__main__":
                 arduino_stop()
                 print("Program Finished.")
             else:
-                print("Violation detected. Waiting " + str(wait_time) + " seconds before trying again.")
-                root.after(wait_time*1000, while_loop)
+                print("Violation detected. Waiting " + str(CONST_WAIT_TIME) + " seconds before trying again.")
+                root.after(CONST_WAIT_TIME*1000, while_loop)
         
-    root.after(wait_time*1000, while_loop)
+    root.after(CONST_WAIT_TIME*1000, while_loop)
     
     root.mainloop()  
