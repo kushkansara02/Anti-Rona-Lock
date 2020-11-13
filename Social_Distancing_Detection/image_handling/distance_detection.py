@@ -17,8 +17,10 @@ class DistanceDetector:
     face_distances = None
     all_breaches = None
     num_faces = 0
+    CONST_DISTANCE_TOLERANCE = 1.5 #meters
+    #CONST_DISTANCE_TOLERANCE: the minimum distance that people can be relative to each other without breaching regulation in METERS
 
-    def __init__(self, image_file = None, image = [], distance_tolerance = 0.2, adj_width = 1000, height = 500):
+    def __init__(self, image_file = None, image = [], distance_tolerance = CONST_DISTANCE_TOLERANCE, adj_width = 1000, height = 500):
         self.image_file = image_file
         self.distance_tolerance = distance_tolerance
         self.adj_width = adj_width
@@ -33,7 +35,7 @@ class DistanceDetector:
     def detectFaces(self):
         fd = FaceDetector()
         face_rects = fd.detect(self.gray, scaleFactor=1.1,
-                              minNeighbors=5, minSize=(30, 30))
+                              minNeighbors=8, minSize=(30, 30))
 
         self.all_faces = []
         for (x, y, w, h) in face_rects:
@@ -81,7 +83,7 @@ class DistanceDetector:
         for face in self.all_faces:
             for compFace in self.all_faces:
                 if face != compFace and not ([compFace, face] in faces_done or [face, compFace] in faces_done):
-                    distance = get_distance(face["startCord"][0], face["startCord"][1], face["endCord"][0], face["endCord"][1], compFace["startCord"][0], compFace["startCord"][1], compFace["endCord"][0], compFace["endCord"][1], 0.07, 0.07, self.adj_width)
+                    distance = get_distance(face["startCord"][0], face["startCord"][1], face["endCord"][0], face["endCord"][1], compFace["startCord"][0], compFace["startCord"][1], compFace["endCord"][0], compFace["endCord"][1], self.adj_width)
                     self.face_distances.append({"faces": [face, compFace], "dist": distance})
                     faces_done.append([face, compFace])
 

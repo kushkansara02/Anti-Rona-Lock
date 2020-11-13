@@ -37,12 +37,14 @@ def mask_detection(image):
     return False
 
 def distance_detection(image):
-    print("Distance is being maintained.")
-    # detector = DistanceDetector(image)
-    # detector.getCloseFaces()
-    # allBreaches = detector.all_breaches
-    # if len(allBreaches > 0):
-    #     return False #do not open door, they are not following rules
+    detector = DistanceDetector(image)
+    detector.getCloseFaces()
+    allBreaches = detector.all_breaches
+    detector.showImage()
+    if len(allBreaches) > 0:
+        print("Distance not being maintained.")
+        return False #do not open door, they are not following rules
+    print("Distance being maintained.")
     return True #open door
 
 # def main():
@@ -148,7 +150,9 @@ if __name__ == "__main__":
             # image_list.append(image)
             next_image()
             masks = mask_detection(image)
-            distancing = distance_detection(image)
+            # distancing = distance_detection(image)
+            distancing = distance_detection(images_abs_path + "notTooClose.jpg")
+            print("DEBUGING!!!!!!!!!!!!!!!!!")
             if (masks and distancing):
                 arduino_unlock_door()
                 sleep(5)
