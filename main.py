@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import tkinter
 from Social_Distancing_Detection.image_handling.distance_detection import DistanceDetector
 import os
+from random import randint
 
 #below are dummy functions
 
@@ -33,8 +34,9 @@ def arduino_stop():
     return
 
 def mask_detection(image):
-    print("Masks are not being worn.")
-    return False
+    boolean = bool(randint(0,1))
+    print("Masks are " + ("" if boolean else "not ") + "being worn.")
+    return boolean
 
 def distance_detection(image):
     detector = DistanceDetector(image)
@@ -143,7 +145,7 @@ if __name__ == "__main__":
 
     #this code replaces main()
     arduino_start()
-    CONST_WAIT_TIME = 3
+    CONST_WAIT_TIME = 1
     def while_loop():
         if arduino_range_sensor():
             image = arduino_get_image()
@@ -152,13 +154,16 @@ if __name__ == "__main__":
             masks = mask_detection(image)
             # distancing = distance_detection(image)
             distancing = distance_detection(images_abs_path + "notTooClose.jpg")
-            print("DEBUGING!!!!!!!!!!!!!!!!!")
             if (masks and distancing):
                 arduino_unlock_door()
-                sleep(5)
+                sleep_time = 1
+                print("Waiting " + str(sleep_time) + " seconds before relocking.")
+                sleep(sleep_time)
                 arduino_lock_door()
                 arduino_stop()
                 print("Program Finished.")
+                #comment this line out later
+                root.destroy()
             else:
                 print("Violation detected. Waiting " + str(CONST_WAIT_TIME) + " seconds before trying again.")
                 root.after(CONST_WAIT_TIME*1000, while_loop)
