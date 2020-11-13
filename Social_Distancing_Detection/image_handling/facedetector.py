@@ -1,9 +1,14 @@
 import cv2
+import os
 
 class FaceDetector:
 
-    def __init__(self, faceCascadePath = "cascades/haarcascade_frontalface_default.xml"):
-        self.faceCascade = cv2.CascadeClassifier(faceCascadePath)
+    faceCascade = None
+
+    def __init__(self, faceCascadePath = "/cascades/haarcascade_frontalface_default.xml"):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        finalPath = dir_path + faceCascadePath
+        self.faceCascade = cv2.CascadeClassifier(finalPath)
 
     def detect(self, image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)):
         rects = self.faceCascade.detectMultiScale(

@@ -18,7 +18,7 @@ class DistanceDetector:
     all_breaches = None
     num_faces = 0
 
-    def __init__(self, image_file = None, image = [], distance_tolerance = 1, adj_width = 1000, height = 500):
+    def __init__(self, image_file = None, image = [], distance_tolerance = 0.2, adj_width = 1000, height = 500):
         self.image_file = image_file
         self.distance_tolerance = distance_tolerance
         self.adj_width = adj_width
@@ -94,7 +94,7 @@ class DistanceDetector:
             if face_combo["dist"] < self.distance_tolerance:
                 self.all_breaches.append(face_combo)
                 cv2.putText(self.image, "Faces in this image not following social distancing",
-                            (50, self.height - 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+                            (50, self.height - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 print("SOCIAL DISTANCING IN BREACH")
                 print("Face 1: {faceStart} to {faceEnd}".format(faceStart = face_combo["faces"][0]["startCord"], faceEnd = face_combo["faces"][0]["endCord"]))
                 print("Face 2: {faceStart} to {faceEnd}".format(faceStart = face_combo["faces"][1]["startCord"], faceEnd = face_combo["faces"][1]["endCord"]))
