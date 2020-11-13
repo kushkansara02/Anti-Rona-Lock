@@ -82,6 +82,7 @@ if __name__ == "__main__":
     canvas = tkinter.Canvas(root, width=CONST_CANVAS_WIDTH, height=CONST_CANVAS_HEIGHT) 
     canvas.pack()     
     
+    # return a new size (2-tuple) given an original size (2-tuple) and a desired width, scales size linearly. Takes into account the max allowed image height.
     def new_size(size, desired_width=CONST_CANVAS_WIDTH):
         width = size[0]
         height = size[1]
@@ -92,6 +93,7 @@ if __name__ == "__main__":
             new_width = (int) ((CONST_CANVAS_MAX_IMAGE_HEIGHT/new_height)*new_width)
         return (new_width, new_height)
 
+    # return a ImageTk.PhotoImage image given the name of the image and the directory containing it
     def image(filename, location):
         abs_path = location + filename
         img_size = Image.open(abs_path).size
