@@ -5,19 +5,19 @@ import tkinter
 from Social_Distancing_Detection.image_handling.distance_detection import DistanceDetector
 import os
 from random import randint
-# from Mask_Detection.detect_mask_video import detect_and_predict_mask
-# from tensorflow.keras.models import load_model
-# import cv2
+from Mask_Detection.detect_mask_video import detect_and_predict_mask
+from tensorflow.keras.models import load_model
+import cv2
 
 debug_or_be_bugged_abs_path = os.path.dirname(os.path.realpath(__file__))
 
-# # load our serialized face detector model from disk
-# prototxtPath = debug_or_be_bugged_abs_path + "Mask_Detection/face_detector/deploy.prototxt"
-# weightsPath = debug_or_be_bugged_abs_path + "Mask_Detection/face_detector/res10_300x300_ssd_iter_140000.caffemodel"
-# faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
+# load our serialized face detector model from disk
+prototxtPath = debug_or_be_bugged_abs_path + "/Mask_Detection/face_detector/deploy.prototxt"
+weightsPath = debug_or_be_bugged_abs_path + "/Mask_Detection/face_detector/res10_300x300_ssd_iter_140000.caffemodel"
+faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
-# # load the face mask detector model from disk
-# maskNet = load_model(debug_or_be_bugged_abs_path + "Mask_Detection/mask_detector.model") 
+# load the face mask detector model from disk
+maskNet = load_model(debug_or_be_bugged_abs_path + "/Mask_Detection/mask_detector.model") 
 
 image_list = []
 
@@ -115,18 +115,18 @@ def arduino_stop():
     return
 
 def mask_detection(image):
-    # simulating mask detection (50/50 chance)
-    boolean = bool(randint(0,1))
-    print("Masks are " + ("" if boolean else "not ") + "being worn.")
-    return boolean
-    # locations_and_predictions = detect_and_predict_mask(cv2.imread(image), faceNet, maskNet)
-    # if len(locations_and_predictions[1]) == 0:
-    #     printf("Masks being worn.")
-    #     return True
-    # printf("Masks not being worn.")
-    # return False
+    # # simulating mask detection (50/50 chance)
+    # boolean = bool(randint(0,1))
+    # print("Masks are " + ("" if boolean else "not ") + "being worn.")
+    # return boolean
+    locations_and_predictions = detect_and_predict_mask(cv2.imread(image), faceNet, maskNet)
+    if len(locations_and_predictions[1]) == 0:
+        print("Mask(s) being worn.")
+        return True
+    print("Mask(s) not being worn.")
+    return False
 
-detector = DistanceDetector(images_abs_path + "cat1.png") # cat.png is arbitrary, just need to pass an image or else errors will occur for some reason
+detector = DistanceDetector(images_abs_path + "cat1.png") # cat1.png is arbitrary, just need to pass an image or else errors will occur for some reason
 
 def distance_detection(image):
     detector.__init__(image)
@@ -170,7 +170,7 @@ def while_loop():
         image = arduino_get_image()
         # image_list.append(image)
         # next_image()
-        masks = mask_detection(image)
+        masks = mask_detection(images_abs_path + "johnCena.jpg")
         # distancing = distance_detection(image)
         distancing = distance_detection(images_abs_path + "johnCena.jpg")
         image_list.append(tkimage("johnCena.jpg", images_abs_path))
