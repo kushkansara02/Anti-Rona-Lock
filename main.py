@@ -126,12 +126,14 @@ def mask_detection(image):
     # printf("Masks not being worn.")
     # return False
 
+detector = DistanceDetector(images_abs_path + "cat1.png") # cat.png is arbitrary, just need to pass an image or else errors will occur for some reason
+
 def distance_detection(image):
-    detector = DistanceDetector(image)
+    detector.__init__(image)
     detector.getCloseFaces()
     allBreaches = detector.all_breaches
     # detector.showImage()
-    detector.writeImage()
+    detector.writeImage(location=images_abs_path)
     if len(allBreaches) > 0:
         print("Distance not being maintained.")
         return False #do not open door, they are not following rules
@@ -189,3 +191,11 @@ def while_loop():
 root.after(CONST_WAIT_TIME*1000, while_loop)
 
 root.mainloop()  
+
+def delete_images():
+    i = 1
+    while (os.path.isfile(images_abs_path + "image" + str(i) + ".jpg")):
+        os.remove(images_abs_path + "image" + str(i) + ".jpg")
+        i += 1
+
+delete_images()

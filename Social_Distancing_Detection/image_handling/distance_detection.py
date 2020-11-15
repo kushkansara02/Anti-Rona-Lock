@@ -17,8 +17,9 @@ class DistanceDetector:
     face_distances = None
     all_breaches = None
     num_faces = 0
-    CONST_DISTANCE_TOLERANCE = 1.5 #meters
-    #CONST_DISTANCE_TOLERANCE: the minimum distance that people can be relative to each other without breaching regulation in METERS
+    CONST_DISTANCE_TOLERANCE = 1.5 #the minimum distance that people can be relative to each other without breaching regulation in METERS
+    image_count = 0
+
 
     def __init__(self, image_file = None, image = [], distance_tolerance = CONST_DISTANCE_TOLERANCE, adj_width = 1000, height = 500):
         self.image_file = image_file
@@ -107,6 +108,10 @@ class DistanceDetector:
         cv2.imshow("Faces", self.image)
         cv2.waitKey(0)
 
-    #overwrites the image file with the same image but with green rectangle(s) around faces
-    def writeImage(self):
-        cv2.imwrite(self.image_file, self.image)
+    #overwrites the image file with the same image but with green rectangle(s) around faces OR creates new image in specified location
+    def writeImage(self, location=None):
+        self.image_count += 1
+        if location==None:
+            cv2.imwrite(self.image_file, self.image)
+        else:
+            cv2.imwrite(location + "image" + str(self.image_count) + ".jpg", self.image)
