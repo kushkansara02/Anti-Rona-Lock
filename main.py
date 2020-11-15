@@ -119,7 +119,7 @@ def mask_detection(image):
     boolean = bool(randint(0,1))
     print("Masks are " + ("" if boolean else "not ") + "being worn.")
     return boolean
-    # locations_and_predictions = detect_and_predict_mask(image, faceNet, maskNet)
+    # locations_and_predictions = detect_and_predict_mask(cv2.imread(image), faceNet, maskNet)
     # if len(locations_and_predictions[1]) == 0:
     #     printf("Masks being worn.")
     #     return True
