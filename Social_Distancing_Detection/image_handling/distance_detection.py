@@ -106,3 +106,7 @@ class DistanceDetector:
     def showImage(self):
         cv2.imshow("Faces", self.image)
         cv2.waitKey(0)
+
+    #overwrites the image file with the same image but with green rectangle(s) around faces
+    def writeImage(self):
+        cv2.imwrite(self.image_file, self.image)
