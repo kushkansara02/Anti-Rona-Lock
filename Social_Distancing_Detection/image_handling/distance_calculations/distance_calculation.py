@@ -6,7 +6,7 @@ from .image_analysis import get_angle
 
 CONST_CAM_ANGLE = pi/2 #Our camera is supposedly 90 degrees or pi/2, but I'm not sure about this. 
 #CONST_CAM_ANGLE: angle of the horizontal field of view of the camera in RADIANS
-CONST_AVG_FACE_BREADTH = 0.20 #Average is roughly 15cm or 0.15m, but the rectangles around detected faces are usually too big, so I will increase it a bit to account for this
+CONST_AVG_FACE_BREADTH = 0.20 #Average is roughly 15cm or 0.15m (https://en.wikipedia.org/wiki/Human_head#Average_head_sizes), but the rectangles around detected faces are usually too big, so I will increase it a bit to account for this
 #CONST_AVG_FACE_BREADTH: the average face width/breadth of adult humans in METERS
 
 #Point class is not really necessary
@@ -20,6 +20,7 @@ class Point():
 
     def print_point(self):
         print(str(self.x) + ", " + str(self.y))
+
 
 #get_distance returns the HORIZONTAL distance between the center of two faces (rectangles) in an image using ratios and the law of cosines.
 
@@ -37,22 +38,16 @@ def get_distance(x1, y1, x2, y2, x3, y3, x4, y4, imagePixelWidth):
     # face2Center.print_point()
     face1Dist = get_cam_to_object_distance(CONST_AVG_FACE_BREADTH, get_angle(x1, x2, imagePixelWidth, CONST_CAM_ANGLE))
     face2Dist = get_cam_to_object_distance(CONST_AVG_FACE_BREADTH, get_angle(x3, x4, imagePixelWidth, CONST_CAM_ANGLE))
-
     theta = get_angle(face1Center.x, face2Center.x, imagePixelWidth, CONST_CAM_ANGLE)
-    # print("theta:")
-    # print(theta)
+    # print("theta: " + str(theta))
     
     #rest is trig (law of cosines)
     distanceSquared = face1Dist*face1Dist + face2Dist*face2Dist - 2*face1Dist*face2Dist*cos(theta)
-    # print("cos(theta):")
-    # print(cos(theta))
-    # print("distance squared:")
-    # print(distanceSquared)
+    # print("cos(theta): " + str(cost(theta)))
+    # print("distance squared: " + str(distanceSquared))
     return sqrt(distanceSquared)
 
 if __name__ == "__main__":
-    #expecting output 0.7653668647301795 for input (0,0,50,0,50,0,100,0,1,1,100,pi/2)
-    #test = get_distance(0,0,50,0,50,0,100,0,1,1,100,pi/2)
     test = get_distance(0,0,50,0,50,0,100,0,100)
     print(test)
 
