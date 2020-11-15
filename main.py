@@ -5,6 +5,19 @@ import tkinter
 from Social_Distancing_Detection.image_handling.distance_detection import DistanceDetector
 import os
 from random import randint
+# from Mask_Detection.detect_mask_video import detect_and_predict_mask
+# from tensorflow.keras.models import load_model
+# import cv2
+
+debug_or_be_bugged_abs_path = os.path.dirname(os.path.realpath(__file__))
+
+# # load our serialized face detector model from disk
+# prototxtPath = debug_or_be_bugged_abs_path + "Mask_Detection\\face_detector\\deploy.prototxt"
+# weightsPath = debug_or_be_bugged_abs_path + "Mask_Detection\\face_detector\\res10_300x300_ssd_iter_140000.caffemodel"
+# faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
+
+# # load the face mask detector model from disk
+# maskNet = load_model(debug_or_be_bugged_abs_path + "Mask_Detection\\mask_detector.model") 
 
 image_list = []
 
@@ -39,7 +52,7 @@ def tkimage(filename, location):
     # alternative method: img = tkinter.PhotoImage(file="filename")
     return img
 
-images_abs_path = os.path.dirname(os.path.realpath(__file__)) + "\\images\\"
+images_abs_path = debug_or_be_bugged_abs_path + "\\images\\"
 
 img1 = tkimage("cat1.png", images_abs_path)
 img2 = tkimage("cat2.jpg", images_abs_path)
@@ -106,6 +119,12 @@ def mask_detection(image):
     boolean = bool(randint(0,1))
     print("Masks are " + ("" if boolean else "not ") + "being worn.")
     return boolean
+    # locations_and_predictions = detect_and_predict_mask(image, faceNet, maskNet)
+    # if len(locations_and_predictions[1]) == 0:
+    #     printf("Masks being worn.")
+    #     return True
+    # printf("Masks not being worn.")
+    # return False
 
 def distance_detection(image):
     detector = DistanceDetector(image)
