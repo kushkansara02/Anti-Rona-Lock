@@ -1,25 +1,21 @@
 from time import sleep
-from PIL import Image, ImageTk
-#I installed PIL (pillow) using "pip3 install pillow"
+from random import randint
+from PIL import Image, ImageTk #I installed PIL (pillow) using "pip3 install pillow"
 import tkinter
+from image_manip import ImageWriter
 from Social_Distancing_Detection.image_handling.distance_detection import DistanceDetector
 import os
-from random import randint
+import cv2
+import imutils
 from Mask_Detection.detect_mask_video import detect_and_predict_mask
 from tensorflow.keras.models import load_model
-import cv2
 
 debug_or_be_bugged_abs_path = os.path.dirname(os.path.realpath(__file__))
 
-# load our serialized face detector model from disk
-prototxtPath = debug_or_be_bugged_abs_path + "/Mask_Detection/face_detector/deploy.prototxt"
-weightsPath = debug_or_be_bugged_abs_path + "/Mask_Detection/face_detector/res10_300x300_ssd_iter_140000.caffemodel"
-faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
-
-# load the face mask detector model from disk
-maskNet = load_model(debug_or_be_bugged_abs_path + "/Mask_Detection/mask_detector.model") 
-
+# list of images which can be cycled through using buttons
 image_list = []
+
+### TKINTER stuff ###
 
 root = tkinter.Tk()
 root.title("Main")
@@ -87,7 +83,12 @@ button.place(x=500,y=900)
 button = tkinter.Button(root, text="Previous Image", command=prev_image)
 button.place(x=400,y=900)
 
-#below are (mostly) dummy functions
+# creating instances of each class we are using
+image_writer_masks = ImageWriter(directory=images_abs_path, name="masks")
+image_writer_distancing = ImageWriter(directory=images_abs_path, name="distancing")
+detector = DistanceDetector(images_abs_path + "cat1.png") # cat1.png is arbitrary, just need to pass an image or else errors will occur for some reason
+
+### ARDUINO ###
 
 def arduino_start():
     print("Arduino started.")
@@ -98,7 +99,7 @@ def arduino_get_image():
     return 0
 
 def arduino_range_sensor():
-    #will tell us if there is an object in front of the door
+    # will tell us if there is an object in front of the door
     print("There is someone at the door.")
     return True
 
@@ -114,31 +115,75 @@ def arduino_stop():
     print("Arduino stopped.")
     return
 
+### MASK DETECTION ###
+
+# load our serialized face detector model from disk
+prototxtPath = debug_or_be_bugged_abs_path + "/Mask_Detection/face_detector/deploy.prototxt"
+weightsPath = debug_or_be_bugged_abs_path + "/Mask_Detection/face_detector/res10_300x300_ssd_iter_140000.caffemodel"
+faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
+
+# load the face mask detector model from disk
+maskNet = load_model(debug_or_be_bugged_abs_path + "/Mask_Detection/mask_detector.model") 
+
 def mask_detection(image):
     # # simulating mask detection (50/50 chance)
     # boolean = bool(randint(0,1))
     # print("Masks are " + ("" if boolean else "not ") + "being worn.")
     # return boolean
-    locations_and_predictions = detect_and_predict_mask(cv2.imread(image), faceNet, maskNet)
-    if len(locations_and_predictions[1]) == 0:
+
+    # get the frame (image) using cv2.imread
+    frame = cv2.imread(image)
+
+    # detect faces in the frame and determine if they are wearing a face mask or not
+    (locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
+
+    # loop over the detected face locations and their corresponding locations
+    for (box, pred) in zip(locs, preds):
+        # unpack the bounding box and predictions
+        (startX, startY, endX, endY) = box
+        (mask, withoutMask) = pred
+
+        # determine the class label and color we'll use to draw
+        # the bounding box and text
+        label = "Mask" if mask > withoutMask else "No Mask"
+        color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+
+        # include the probability in the label
+        label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+
+        # display the label and bounding box rectangle on the output frame
+        cv2.putText(frame, label, (startX + 10, endY - 10),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+        cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
+
+    # # show the output frame
+    # cv2.imshow("Frame", frame)
+    # cv2.waitKey(0)
+    frame = imutils.resize(frame, width=500, height=1000)
+    image_writer_masks.writeImage(image, frame)
+    image_list.append(tkimage(image_writer_masks.getImageName(), images_abs_path))
+    if len(preds[0])*100 > 50:
         print("Mask(s) being worn.")
         return True
     print("Mask(s) not being worn.")
     return False
 
-detector = DistanceDetector(images_abs_path + "cat1.png") # cat1.png is arbitrary, just need to pass an image or else errors will occur for some reason
+### DISTANCE DETECTION ###
 
 def distance_detection(image):
     detector.__init__(image)
     detector.getCloseFaces()
     allBreaches = detector.all_breaches
     # detector.showImage()
-    detector.writeImage(location=images_abs_path)
+    image_writer_distancing.writeImage(detector.image_file, detector.image)
+    image_list.append(tkimage(image_writer_distancing.getImageName(), images_abs_path))
     if len(allBreaches) > 0:
         print("Distance not being maintained.")
-        return False #do not open door, they are not following rules
+        return False # do not open door, they are not following rules
     print("Distance being maintained.")
-    return True #open door
+    return True # open door
+
+### more TKINTER below ###
 
 # def main():
 #     arduino_start()
@@ -161,8 +206,7 @@ def distance_detection(image):
 #     arduino_stop()
 #     print("Program Finished.")
 
-
-#this code replaces main()
+# this replaces main()
 arduino_start()
 CONST_WAIT_TIME = 1
 def while_loop():
@@ -173,7 +217,7 @@ def while_loop():
         masks = mask_detection(images_abs_path + "johnCena.jpg")
         # distancing = distance_detection(image)
         distancing = distance_detection(images_abs_path + "johnCena.jpg")
-        image_list.append(tkimage("johnCena.jpg", images_abs_path))
+        # image_list.append(tkimage("johnCena.jpg", images_abs_path))
         if (masks and distancing):
             arduino_unlock_door()
             sleep_time = 1
@@ -192,10 +236,8 @@ root.after(CONST_WAIT_TIME*1000, while_loop)
 
 root.mainloop()  
 
-def delete_images():
-    i = 1
-    while (os.path.isfile(images_abs_path + "image" + str(i) + ".jpg")):
-        os.remove(images_abs_path + "image" + str(i) + ".jpg")
-        i += 1
+### END ###
 
-delete_images()
+# deleting all the newly created images after program is finished
+image_writer_masks.deleteImages()
+image_writer_distancing.deleteImages()
