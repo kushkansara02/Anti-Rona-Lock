@@ -82,7 +82,7 @@ if __name__ == "__main__":
 	faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
 	# load the face mask detector model from disk
-	maskNet = load_model(os.path.dirname(os.path.realpath(__file__)) + "/mask_detector.model") 
+	maskNet = load_model(os.path.dirname(os.path.realpath(__file__)) + "/mask_detector.model", compile=False) 
 
 	# initialize the video stream
 	print("[INFO] starting video stream...")
@@ -128,6 +128,6 @@ if __name__ == "__main__":
 		if key == ord("q"):
 			break
 
-		# do a bit of cleanup
-		cv2.destroyAllWindows()
-		vs.stop()
+	# do a bit of cleanup
+	cv2.destroyAllWindows()
+	vs.stop()
