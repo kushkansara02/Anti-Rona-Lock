@@ -13,12 +13,9 @@ class ImageWriter:
         self.name = name
         self.extension = extension
 
-    def writeImage(self, image_file, image):
+    def writeImage(self, image):
         self.image_count += 1
-        if self.directory==None:
-            cv2.imwrite(image_file, image)
-        else:
-            cv2.imwrite(self.directory + self.name + str(self.image_count) + self.extension, image)
+        cv2.imwrite(self.directory + self.name + str(self.image_count) + self.extension, image)
 
     def deleteImages(self):
         i = 1
@@ -28,3 +25,18 @@ class ImageWriter:
     
     def getImageName(self):
         return self.name + str(self.image_count) + self.extension
+
+    def getCurrentImageAbsPath(self):
+        return self.directory + self.getImageName()
+
+    def getIthImageName(self, i):
+        if (i <= self.image_count and i > 0):
+            return self.name + str(i) + self.extension
+        else:
+            return None
+
+    def getIthImageAbsPath(self, i):
+        if (i <= self.image_count and i > 0):
+            return self.directory + self.getIthImageName(i)
+        else:
+            return None
