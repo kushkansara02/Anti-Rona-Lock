@@ -7,6 +7,9 @@ from Social_Distancing_Detection.image_handling.distance_detection import Distan
 import os
 import cv2
 import imutils
+import numpy
+# import serial #pip3 install pyserial
+import urllib.request
 from Mask_Detection.detect_mask_video import detect_and_predict_mask
 from tensorflow.keras.models import load_model
 
@@ -84,17 +87,30 @@ button = tkinter.Button(root, text="Previous Image", command=prev_image)
 button.place(x=400,y=900)
 
 # creating instances of each class we are using
+image_writer_arduino = ImageWriter(directory=images_abs_path, name="camera")
 image_writer_masks = ImageWriter(directory=images_abs_path, name="masks")
 image_writer_distancing = ImageWriter(directory=images_abs_path, name="distancing")
 detector = DistanceDetector(images_abs_path + "cat1.png") # cat1.png is arbitrary, just need to pass an image or else errors will occur for some reason
 
 ### ARDUINO ###
 
+# arduino_port = ""
+# ser = serial.Serial(arduino_port)
+# ser.write("Testing")
+
+camera_url = "http://192.168.1.106/cam-hi.jpg"
+
 def arduino_start():
     print("Arduino started.")
     return
 
 def arduino_get_image():
+    # # https://youtu.be/92UBFhPJQJ8 at 9:20
+    # camera_response = urllib.request.urlopen(camera_url)
+    # print(camera_response.info())
+    # numpy_image = numpy.array(bytearray(camera_response.read()), dtype=numpy.uint8)
+    # retrieved_image = cv2.imdecode(numpy_image, -1)
+    # image_writer_arduino.writeImage(retrieved_image)
     print("Retrieved image successfully.")
     return 0
 
@@ -152,17 +168,19 @@ def mask_detection(image):
         label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 
         # display the label and bounding box rectangle on the output frame
-        cv2.putText(frame, label, (startX + 10, endY - 10),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+        cv2.putText(frame, label, (startX - 20, endY + 20),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
         cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
     # # show the output frame
     # cv2.imshow("Frame", frame)
     # cv2.waitKey(0)
-    frame = imutils.resize(frame, width=500, height=1000)
-    image_writer_masks.writeImage(image, frame)
+    image_writer_masks.writeImage(frame)
     image_list.append(tkimage(image_writer_masks.getImageName(), images_abs_path))
-    if len(preds[0])*100 > 50:
+    if (len(preds) == 0):
+        print("Mask detection couldn't detect any faces..")
+        return False
+    if preds[0][0]*100 > 50:
         print("Mask(s) being worn.")
         return True
     print("Mask(s) not being worn.")
@@ -175,7 +193,7 @@ def distance_detection(image):
     detector.getCloseFaces()
     allBreaches = detector.all_breaches
     # detector.showImage()
-    image_writer_distancing.writeImage(detector.image_file, detector.image)
+    image_writer_distancing.writeImage(detector.image)
     image_list.append(tkimage(image_writer_distancing.getImageName(), images_abs_path))
     if len(allBreaches) > 0:
         print("Distance not being maintained.")
@@ -208,16 +226,14 @@ def distance_detection(image):
 
 # this replaces main()
 arduino_start()
-CONST_WAIT_TIME = 1
+CONST_WAIT_TIME = 3
 def while_loop():
     if arduino_range_sensor():
-        image = arduino_get_image()
-        # image_list.append(image)
-        # next_image()
-        masks = mask_detection(images_abs_path + "johnCena.jpg")
-        # distancing = distance_detection(image)
-        distancing = distance_detection(images_abs_path + "johnCena.jpg")
-        # image_list.append(tkimage("johnCena.jpg", images_abs_path))
+        arduino_get_image()
+        # image_path = image_writer_arduino.getCurrentImageAbsPath()
+        test_image_path = images_abs_path + "johnCena.jpg"
+        masks = mask_detection(test_image_path)
+        distancing = distance_detection(test_image_path)
         if (masks and distancing):
             arduino_unlock_door()
             sleep_time = 1
@@ -226,7 +242,6 @@ def while_loop():
             arduino_lock_door()
             arduino_stop()
             print("Program Finished.")
-            # comment out root.destory() if not testing
             # root.destroy()
         else:
             print("Violation detected. Waiting " + str(CONST_WAIT_TIME) + " seconds before trying again.")
@@ -239,5 +254,6 @@ root.mainloop()
 ### END ###
 
 # deleting all the newly created images after program is finished
+image_writer_arduino.deleteImages()
 image_writer_masks.deleteImages()
 image_writer_distancing.deleteImages()
