@@ -100,7 +100,15 @@ detector = DistanceDetector(images_abs_path + "cat1.png") # cat1.png is arbitrar
 # ser.write(b'open')
 
 camera_url = "http://192.168.1.106/cam-hi.jpg"
-ser = serial.Serial('COM3', 115200);
+CONST_RETRY_DELAY = 10
+while True:
+    try:
+        ser = serial.Serial('COM3', 115200)
+        break
+    except Exception:
+        print("Something went wrong with instantiating the Serial object. Trying again in " + str(CONST_RETRY_DELAY) + " seconds.")
+        sleep(CONST_RETRY_DELAY)
+    
 
 def arduino_start():
     print("Arduino started.")
