@@ -8,7 +8,8 @@ import os
 import cv2
 import imutils
 import numpy
-# import serial #pip3 install pyserial
+import serial 
+#pip3 install pyserial
 import urllib.request
 from Mask_Detection.detect_mask_video import detect_and_predict_mask
 from tensorflow.keras.models import load_model
@@ -53,13 +54,13 @@ def tkimage(filename, location):
 
 images_abs_path = debug_or_be_bugged_abs_path + "/images/"
 
-img1 = tkimage("cat1.png", images_abs_path)
-img2 = tkimage("cat2.jpg", images_abs_path)
-img3 = tkimage("cat3.jpg", images_abs_path)
+img1 = tkimage("logo.jpg", images_abs_path)
+# img2 = tkimage("cat2.jpg", images_abs_path)
+# img3 = tkimage("cat3.jpg", images_abs_path)
 
 image_list.append(img1)
-image_list.append(img2)    
-image_list.append(img3)
+# image_list.append(img2)    
+# image_list.append(img3)
 
 i = 0
 canvas.create_image(0,0, anchor=tkinter.constants.NW, image=image_list[i])   
@@ -94,24 +95,25 @@ detector = DistanceDetector(images_abs_path + "cat1.png") # cat1.png is arbitrar
 
 ### ARDUINO ###
 
-# arduino_port = ""
+# arduino_port = "COM3"
 # ser = serial.Serial(arduino_port)
-# ser.write("Testing")
+# ser.write(b'open')
 
 camera_url = "http://192.168.1.106/cam-hi.jpg"
+ser = serial.Serial('COM3', 115200);
 
 def arduino_start():
     print("Arduino started.")
     return
 
 def arduino_get_image():
-    # # https://youtu.be/92UBFhPJQJ8 at 9:20
-    # camera_response = urllib.request.urlopen(camera_url)
-    # print(camera_response.info())
-    # numpy_image = numpy.array(bytearray(camera_response.read()), dtype=numpy.uint8)
-    # retrieved_image = cv2.imdecode(numpy_image, -1)
-    # image_writer_arduino.writeImage(retrieved_image)
-    print("Retrieved image successfully.")
+    # https://youtu.be/92UBFhPJQJ8 at 9:20
+    camera_response = urllib.request.urlopen(camera_url)
+    print(camera_response.info())
+    numpy_image = numpy.array(bytearray(camera_response.read()), dtype=numpy.uint8)
+    retrieved_image = cv2.imdecode(numpy_image, -1)
+    image_writer_arduino.writeImage(retrieved_image)
+    print("Retrieved image from arduino successfully.")
     return 0
 
 def arduino_range_sensor():
@@ -120,10 +122,12 @@ def arduino_range_sensor():
     return True
 
 def arduino_unlock_door():
+    ser.write(b'o') 
     print("Door unlocked successfully.")
     return
 
 def arduino_lock_door():
+    ser.write(b'c') 
     print("Door locked successfully.")
     return
 
@@ -230,17 +234,19 @@ CONST_WAIT_TIME = 3
 def while_loop():
     if arduino_range_sensor():
         arduino_get_image()
-        # image_path = image_writer_arduino.getCurrentImageAbsPath()
-        test_image_path = images_abs_path + "johnCena.jpg"
-        masks = mask_detection(test_image_path)
-        distancing = distance_detection(test_image_path)
+        image_path = image_writer_arduino.getCurrentImageAbsPath()
+        # test_image_path = images_abs_path + "johnCena.jpg"
+        masks = mask_detection(image_path)
+        distancing = distance_detection(image_path)
+        # Auto present the current image
+        next_image()
         if (masks and distancing):
             arduino_unlock_door()
-            sleep_time = 1
-            print("Waiting " + str(sleep_time) + " seconds before relocking.")
-            sleep(sleep_time)
-            arduino_lock_door()
-            arduino_stop()
+            # sleep_time = 3
+            # print("Waiting " + str(sleep_time) + " seconds before relocking.")
+            # # sleep(sleep_time)
+            # arduino_lock_door()
+            # arduino_stop()
             print("Program Finished.")
             # root.destroy()
         else:
